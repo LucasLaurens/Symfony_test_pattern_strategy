@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  database:
+    image: 'mysql:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: resultats
+      MYSQL_PASSWORD: root
+    ports:
+      - '4001:3306'
