@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Resultats{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <h3>Les produits achetés par l'utilisateur: {{ user }}</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>{{ 'periode'|upper }}</th>
+                <th>{{ 'points'|upper }}</th>
+                <th>{{ 'euros'|upper }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, item in data %}
+                <tr {% if (0 == index % 2) %} class="second-color-row" {% endif %}>
+                    <td>{{ item['period']|upper }}</td>
+                    <td>{{ item['points'] }}</td>
+                    <td>{{ item['euros'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
