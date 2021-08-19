@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class ResultatsController extends AbstractController
 {
@@ -38,7 +39,9 @@ class ResultatsController extends AbstractController
 
         return $this->render('resultats/index.html.twig', [
             'user' => $user,
-            'data' => $dataInCache->get('data_in_cache', function() use($dataArray) {
+            'data' => $dataInCache->get('data_in_cache', function(ItemInterface $item) use($dataArray) {
+                $day = (3600 * 24);
+                $item->expiresAfter($day);
                 return $dataArray;
             })
         ]);
