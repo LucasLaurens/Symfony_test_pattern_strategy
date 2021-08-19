@@ -24,23 +24,15 @@ class ResultatsController extends AbstractController
      */
     public function index(CacheInterface $dataInCache): Response
     {
-        $euros     = [];
-        $dataArray = [];
-        $points    = [0, 0 , 0];
         $file      = __DIR__."/../../temp/csv/resultats_users.csv";
-
         $data      = $this->resultUser->readData($file);
-        $dates     = $this->resultUser->dateParser(['01/01/2021', '30/04/2021', '01/05/2021', '31/08/2021', '01/10/2021', '31/12/2021']);
-        $points    = $this->resultUser->getPointsByPeriod($data, $dates, $points);
-        $euros     = $this->resultUser->getEurosByPeriod($points, $euros); 
-        $dataArray = $this->resultUser->getPeriods($dataArray);
-        $dataArray = $this->resultUser->addLastValuesInFinalArray($dataArray, $points, $euros);
+        $day       = (3600 * 24);
         $user      = $this->resultUser->getUser($data);
+        $dataArray = $this->resultUser->getData($data);
 
         return $this->render('resultats/index.html.twig', [
             'user' => $user,
-            'data' => $dataInCache->get('data_in_cache', function(ItemInterface $item) use($dataArray) {
-                $day = (3600 * 24);
+            'data' => $dataInCache->get('data_in_cache', function(ItemInterface $item) use($dataArray, $day) {
                 $item->expiresAfter($day);
                 return $dataArray;
             })

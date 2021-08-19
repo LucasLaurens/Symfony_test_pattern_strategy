@@ -11,6 +11,24 @@ use Symfony\Component\Serializer\Serializer;
 class ResultUser implements ResultUserInterface
 {    
     /**
+     * Retrieve the final data which are euros and points per period
+     */
+    public function getData(array $data): array
+    {
+        $euros     = [];
+        $dataArray = [];
+        $points    = [0, 0, 0];
+
+        $dates     = $this->dateParser(['01/01/2021', '30/04/2021', '01/05/2021', '31/08/2021', '01/10/2021', '31/12/2021']);
+        $points    = $this->getPointsByPeriod($data, $dates, $points);
+        $euros     = $this->getEurosByPeriod($points, $euros); 
+        $dataArray = $this->getPeriods($dataArray);
+        
+        return $this->addLastValuesInFinalArray($dataArray, $points, $euros);
+    }
+
+
+    /**
      * Read the csv data
      */
     public function readData(string $file): array
@@ -36,12 +54,25 @@ class ResultUser implements ResultUserInterface
     }
 
     /**
-     * 
+     * Retrieve the current user
      */
-    public function getPointsByPeriod(array $data, array $dates, array $points): array
+    public function getUser(array $data): string
+    {
+        if(isset($data[0]["utilisateur"]) && !empty($data[0]["utilisateur"])) {
+            return $data[0]["utilisateur"];
+        }
+
+        return "";
+    }
+
+    /**
+     * Have the number of points per given period
+     */
+    private function getPointsByPeriod(array $data, array $dates, array $points): array
     {
         foreach($data as $itemArray) {
             $date = Carbon::parse(str_replace('/', '-', $itemArray["date"]));
+            
             // P1
             if( $date > $dates[0] && $date < $dates[1] ) {
                 $points[0] += $this->getTotalPoints(
@@ -75,9 +106,9 @@ class ResultUser implements ResultUserInterface
     }
 
     /**
-     * 
+     * Have the number of euros per given period
      */
-    public function getEurosByPeriod(array $points, array $euros): array
+    private function getEurosByPeriod(array $points, array $euros): array
     {
         foreach($points as $point) {
             $euros[] = $point * 0.001;
@@ -87,9 +118,9 @@ class ResultUser implements ResultUserInterface
     }
 
     /**
-     * 
+     * Add the three periods to the final table
      */
-    public function getPeriods(array $dataArray): array
+    private function getPeriods(array $dataArray): array
     {
         for($i=0; $i<3; $i++) {
             $dataArray[$i]['period'] = "Period " . ($i+1);
@@ -99,9 +130,9 @@ class ResultUser implements ResultUserInterface
     }
 
     /**
-     * 
+     * Add the key/value model to the final data table
      */
-    public function addLastValuesInFinalArray(array $dataArray, array $points, array $euros): array
+    private function addLastValuesInFinalArray(array $dataArray, array $points, array $euros): array
     {
         foreach($dataArray as $index => &$itemArray) {
             $itemArray['points'] = $points[$index];
@@ -111,19 +142,10 @@ class ResultUser implements ResultUserInterface
         return $dataArray;
     }
 
-    public function getUser(array $data): string
-    {
-        if(isset($data[0]["utilisateur"]) && !empty($data[0]["utilisateur"])) {
-            return $data[0]["utilisateur"];
-        }
-
-        return "";
-    }
-
     /**
-     * 
+     * Get the correct date format
      */
-    public function dateParser(array $arr): array {
+    private function dateParser(array $arr): array {
         foreach($arr as &$item) {
             $item = Carbon::parse(str_replace('/', '-', $item));
         } unset($item);
@@ -132,7 +154,7 @@ class ResultUser implements ResultUserInterface
     }
 
     /**
-     * 
+     * Calculate the number of points per given period and products
      */
     private function getTotalPoints (int $product1, int $product2, int $product3, int $product4): int {
         $tot =  ($product1 * 5);
