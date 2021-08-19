@@ -13,22 +13,18 @@
     <table>
         <thead>
             <tr>
-                <th>Utilisateur</th>
-                <th>Produit 1</th>
-                <th>Produit 2</th>
-                <th>Produit 3</th>
-                <th>Produit 4</th>
-                <th>Date</th>
+                <th>{{ 'periode'|upper }}</th>
+                <th>{{ 'points'|upper }}</th>
+                <th>{{ 'euros'|upper }}</th>
             </tr>
         </thead>
         <tbody>
             {% for item in data %}
-                <tr><td>{{ item['utilisateur'] }}</td>
-                <td>{{ item['produit_1'] }}</td>
-                <td>{{ item['produit_2'] }}</td>
-                <td>{{ item['produit_3'] }}</td>
-                <td>{{ item['produit_4'] }}</td>
-                <td>{{ item['date'] }}</td><tr>
+                <tr>
+                    <td>{{ item['period'] }}</td>
+                    <td>{{ item['points'] }}</td>
+                    <td>{{ item['euros'] }}</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

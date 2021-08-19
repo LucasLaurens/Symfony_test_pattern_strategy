@@ -4,5 +4,5 @@ namespace App\Strategy;
 
 interface ResultUserInterface
 {
-    public function read(string $file): array;
+    public function readData(string $file): array;
 }

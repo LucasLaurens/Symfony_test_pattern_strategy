@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Serializer;
 
 class ResultUser implements ResultUserInterface
 {    
-    public function read(string $file): array
+    public function readData(string $file): array
     {
         $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
         $fileString = file_get_contents($file);
