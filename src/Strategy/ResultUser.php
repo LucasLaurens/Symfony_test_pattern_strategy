@@ -10,12 +10,15 @@ use Symfony\Component\Serializer\Serializer;
 
 class ResultUser implements ResultUserInterface
 {    
+    /**
+     * Read the csv data
+     */
     public function readData(string $file): array
     {
-        $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
-        $fileString = file_get_contents($file);
+        $serializer    = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
+        $fileString    = file_get_contents($file);
         $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
-        $data = $serializer->decode($fileString, $fileExtension, [CsvEncoder::DELIMITER_KEY => ';']);
+        $data          = $serializer->decode($fileString, $fileExtension, [CsvEncoder::DELIMITER_KEY => ';']);
 
         foreach( $data as &$itemArray ) {
             $itemArray = array_combine(
@@ -32,6 +35,9 @@ class ResultUser implements ResultUserInterface
         return $data ?? [];
     }
 
+    /**
+     * 
+     */
     public function getPointsByPeriod(array $data, array $dates, array $points): array
     {
         foreach($data as $itemArray) {
@@ -68,6 +74,9 @@ class ResultUser implements ResultUserInterface
         return $points;
     }
 
+    /**
+     * 
+     */
     public function getEurosByPeriod(array $points, array $euros): array
     {
         foreach($points as $point) {
@@ -77,6 +86,9 @@ class ResultUser implements ResultUserInterface
         return $euros;
     }
 
+    /**
+     * 
+     */
     public function getPeriods(array $dataArray): array
     {
         for($i=0; $i<3; $i++) {
@@ -86,6 +98,9 @@ class ResultUser implements ResultUserInterface
         return $dataArray;
     }
 
+    /**
+     * 
+     */
     public function addLastValuesInFinalArray(array $dataArray, array $points, array $euros): array
     {
         foreach($dataArray as $index => &$itemArray) {
@@ -96,6 +111,18 @@ class ResultUser implements ResultUserInterface
         return $dataArray;
     }
 
+    public function getUser(array $data): string
+    {
+        if(isset($data[0]["utilisateur"]) && !empty($data[0]["utilisateur"])) {
+            return $data[0]["utilisateur"];
+        }
+
+        return "";
+    }
+
+    /**
+     * 
+     */
     public function dateParser(array $arr): array {
         foreach($arr as &$item) {
             $item = Carbon::parse(str_replace('/', '-', $item));
@@ -104,6 +131,9 @@ class ResultUser implements ResultUserInterface
         return $arr;
     }
 
+    /**
+     * 
+     */
     private function getTotalPoints (int $product1, int $product2, int $product3, int $product4): int {
         $tot =  ($product1 * 5);
         $tot += ($product2 * 5);

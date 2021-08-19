@@ -33,8 +33,10 @@ class ResultatsController extends AbstractController
         $euros     = $this->resultUser->getEurosByPeriod($points, $euros); 
         $dataArray = $this->resultUser->getPeriods($dataArray);
         $dataArray = $this->resultUser->addLastValuesInFinalArray($dataArray, $points, $euros);
-        
+        $user      = $this->resultUser->getUser($data);
+
         return $this->render('resultats/index.html.twig', [
+            'user' => $user,
             'data' => $dataArray
         ]);
     }

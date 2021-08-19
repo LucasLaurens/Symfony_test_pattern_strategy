@@ -10,4 +10,5 @@ interface ResultUserInterface
     public function getEurosByPeriod(array $points, array $euros): array;
     public function getPeriods(array $dataArray): array;
     public function addLastValuesInFinalArray(array $dataArray, array $points, array $euros): array;
+    public function getUser(array $data): string;
 }
