@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ResultatsController extends AbstractController
 {
@@ -20,7 +21,7 @@ class ResultatsController extends AbstractController
     /**
      * @Route("/resultats", name="resultats")
      */
-    public function index(): Response
+    public function index(CacheInterface $dataInCache): Response
     {
         $euros     = [];
         $dataArray = [];
@@ -37,7 +38,9 @@ class ResultatsController extends AbstractController
 
         return $this->render('resultats/index.html.twig', [
             'user' => $user,
-            'data' => $dataArray
+            'data' => $dataInCache->get('data_in_cache', function() use($dataArray) {
+                return $dataArray;
+            })
         ]);
     }
 }
